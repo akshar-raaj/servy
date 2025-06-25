@@ -4,9 +4,13 @@ defmodule Servy.Handler do
     # A series of transformations happening here
     request
     |> parse
+    |> log
     |> route
     |> format_response
   end
+
+  # A single expression in the function body. Hence can be written on one line without an end
+  def log(conv), do: IO.inspect conv
 
   def parse(request) do
     [method, path, _] =
