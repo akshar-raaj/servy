@@ -22,11 +22,15 @@ defmodule Servy.Handler do
   end
 
   def route(conv) do
-    if conv.path == "/wildthings" do
-      %{conv | resp_body: "Tiger, Lion, Wolf"}
-    else
-      %{conv | resp_body: "Bears"}
-    end
+    route(conv, conv.path)
+  end
+
+  def route(conv, "/wildthings") do
+    %{conv | resp_body: "Tiger, Lion, Wolf"}
+  end
+
+  def route(conv, "/bears") do
+    %{conv | resp_body: "Bears"}
   end
 
   def format_response(conv) do
@@ -42,7 +46,7 @@ end
 
 
 request = """
-GET /bears HTTP/1.1
+GET /wildthings HTTP/1.1
 Host: example.com
 Accept: */*
 User-Agent: Elixir Client
