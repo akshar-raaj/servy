@@ -9,10 +9,11 @@ defmodule Servy.Handler do
   end
 
   def parse(request) do
-    first_line = request |> String.split("\n") |> List.first()
-    parts = first_line |> String.split(" ")
-    method = Enum.at(parts, 0)
-    path = Enum.at(parts, 1)
+    [method, path, _] =
+      request
+      |> String.split("\n")
+      |> List.first()
+      |> String.split(" ")
     %{method: method, path: path, resp_body: ""}
   end
 
