@@ -54,30 +54,25 @@ defmodule Servy.Handler do
   # As this is a generic function, it will match any conv that does not match the previous clause.
   def rewrite_path(conv), do: conv
 
-  # This is route/1. Function are identified by their name and arity.
-  def route(conv) do
-    route(conv, conv.method, conv.path)
-  end
-
-  # This is route/3.
-  def route(conv, "GET", "/wildthings") do
+  # This is route/1 A function clause
+  def route(%{method: "GET", path: "/wildthings"} = conv) do
     %{conv | status: 200, resp_body: "Tiger, Lion, Wolf"}
   end
 
-  # This is another function clause for route/3
-  def route(conv, "GET", "/bears") do
+  # Another function clause for route/3
+  def route(%{method: "GET", path: "/bears"} = conv) do
     %{conv | status: 200, resp_body: "Bears"}
   end
 
-  def route(conv, "GET", "/bears/" <> id) do
+  def route(%{method: "GET", path: "/bears/" <> id} = conv) do
     %{conv | status: 200, resp_body: "Bear #{id}!"}
   end
 
-  def route(conv, "DELETE", "/bears/" <> id) do
+  def route(%{method: "DELETE", path: "/bears/" <> id} = conv) do
     %{conv | status: 204, resp_body: "Deleted Bear #{id}!"}
   end
 
-  def route(conv, "GET", "/about") do
+  def route(%{method: "GET", path: "/about"} = conv) do
     about_path = Path.expand("../../pages", __DIR__) |> Path.join("about.html")
     case File.read(about_path) do
       {:ok, contents} ->
@@ -89,7 +84,7 @@ defmodule Servy.Handler do
     end
   end
 
-  def route(conv, _method, path) do
+  def route(%{path: path} = conv) do
     %{conv | status: 404, resp_body: "Not Found: #{path}"}
   end
 
@@ -102,7 +97,7 @@ defmodule Servy.Handler do
   def track(conv), do: conv
 
   def emojify(%{status: 200} = conv) do
-    %{conv | "resp_body": "🎉" <> conv.resp_body <> "🎉"}
+    %{conv | resp_body: "🎉" <> conv.resp_body <> "🎉"}
   end
 
   def emojify(conv), do: conv
