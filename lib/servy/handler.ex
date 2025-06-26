@@ -33,6 +33,10 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "Bears"}
   end
 
+  def route(conv, "GET", "/bears/" <> id) do
+    %{conv | status: 200, resp_body: "Bear #{id}!"}
+  end
+
   def route(conv, _method, path) do
     %{conv | status: 404, resp_body: "Not Found: #{path}"}
   end
@@ -81,6 +85,14 @@ User-Agent: Elixir Client
 
 """
 
+bear_request = """
+GET /bears/10 HTTP/1.1
+Host: example.com
+Accept: */*
+User-Agent: Elixir Client
+
+"""
+
 response = Servy.Handler.handle(request)
 IO.puts response
 
@@ -89,3 +101,6 @@ IO.puts bears_response
 
 tigers_response = Servy.Handler.handle(tigers_request)
 IO.puts tigers_response
+
+bear_response = Servy.Handler.handle(bear_request)
+IO.puts bear_response
