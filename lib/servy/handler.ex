@@ -64,6 +64,16 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "Bears"}
   end
 
+  def route(%{method: "GET", path: "/bears/new"} = conv) do
+    file_path = Path.expand("../../pages", __DIR__) |> Path.join("form.html")
+    case File.read(file_path) do
+      {:ok, content} ->
+        %{conv | status: 200, resp_body: content}
+      {:error, :enoent} ->
+        %{conv | status: 404, resp_body: "Cannot create a bear"}
+    end
+  end
+
   def route(%{method: "GET", path: "/bears/" <> id} = conv) do
     %{conv | status: 200, resp_body: "Bear #{id}!"}
   end
@@ -203,6 +213,17 @@ IO.puts response
 
 request = """
 GET /about HTTP/1.1
+Host: example.com
+Accept: */*
+User-Agent: Elixir Client
+
+"""
+
+response = Servy.Handler.handle(request)
+IO.puts response
+
+request = """
+GET /bears/new HTTP/1.1
 Host: example.com
 Accept: */*
 User-Agent: Elixir Client
