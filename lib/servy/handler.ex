@@ -6,6 +6,7 @@ defmodule Servy.Handler do
     |> parse
     |> log
     |> rewrite_path
+    |> rewrite_bear_query_params
     |> route
     |> track
     |> format_response
@@ -29,6 +30,14 @@ defmodule Servy.Handler do
   end
 
   def rewrite_path(conv), do: conv
+
+  def rewrite_bear_query_params(%{path: "/bears?id=" <> bear_id} = conv) do
+    IO.puts "Rewriting bear query param to bear detail"
+    %{conv | path: "/bears/" <> bear_id}
+  end
+
+  # Default catch-all function clause.
+  def rewrite_bear_query_params(conv), do: conv
 
   def route(conv) do
     route(conv, conv.method, conv.path)
@@ -141,6 +150,17 @@ IO.puts delete_bear_response
 
 request = """
 GET /wildlife HTTP/1.1
+Host: example.com
+Accept: */*
+User-Agent: Elixir Client
+
+"""
+
+response = Servy.Handler.handle(request)
+IO.puts response
+
+request = """
+GET /bears?id=5 HTTP/1.1
 Host: example.com
 Accept: */*
 User-Agent: Elixir Client
