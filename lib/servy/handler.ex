@@ -22,15 +22,19 @@ defmodule Servy.Handler do
   end
 
   def route(conv) do
-    route(conv, conv.path)
+    route(conv, conv.method, conv.path)
   end
 
-  def route(conv, "/wildthings") do
+  def route(conv, "GET", "/wildthings") do
     %{conv | resp_body: "Tiger, Lion, Wolf"}
   end
 
-  def route(conv, "/bears") do
+  def route(conv, "GET", "/bears") do
     %{conv | resp_body: "Bears"}
+  end
+
+  def route(conv, _method, path) do
+    %{conv | resp_body: "Not Found: #{path}"}
   end
 
   def format_response(conv) do
@@ -53,5 +57,27 @@ User-Agent: Elixir Client
 
 """
 
+bears_request = """
+GET /bears HTTP/1.1
+Host: example.com
+Accept: */*
+User-Agent: Elixir Client
+
+"""
+
+tigers_request = """
+GET /tigers HTTP/1.1
+Host: example.com
+Accept: */*
+User-Agent: Elixir Client
+
+"""
+
 response = Servy.Handler.handle(request)
 IO.puts response
+
+bears_response = Servy.Handler.handle(bears_request)
+IO.puts bears_response
+
+tigers_response = Servy.Handler.handle(tigers_request)
+IO.puts tigers_response
