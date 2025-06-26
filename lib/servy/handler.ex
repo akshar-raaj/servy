@@ -9,6 +9,7 @@ defmodule Servy.Handler do
     |> rewrite_bear_query_params
     |> route
     |> track
+    |> emojify
     |> format_response
   end
 
@@ -70,6 +71,12 @@ defmodule Servy.Handler do
 
   # Default function clause that matches non 404 statuses
   def track(conv), do: conv
+
+  def emojify(%{status: 200} = conv) do
+    %{conv | "resp_body": "🎉" <> conv.resp_body <> "🎉"}
+  end
+
+  def emojify(conv), do: conv
 
   def format_response(conv) do
     """
