@@ -64,7 +64,8 @@ defmodule Servy.Handler do
   end
 
   def route(conv, "GET", "/about") do
-    case File.read("pages/about.html") do
+    about_path = Path.expand("../../pages", __DIR__) |> Path.join("about.html")
+    case File.read(about_path) do
       {:ok, contents} ->
         %{conv | status: 200, resp_body: contents}
       {:error, :enoent} ->
