@@ -40,14 +40,17 @@ defmodule Servy.Handler do
   # Default catch-all function clause.
   def rewrite_bear_query_params(conv), do: conv
 
+  # This is route/1. Function are identified by their name and arity.
   def route(conv) do
     route(conv, conv.method, conv.path)
   end
 
+  # This is route/3.
   def route(conv, "GET", "/wildthings") do
     %{conv | status: 200, resp_body: "Tiger, Lion, Wolf"}
   end
 
+  # This is another function clause for route/3
   def route(conv, "GET", "/bears") do
     %{conv | status: 200, resp_body: "Bears"}
   end
