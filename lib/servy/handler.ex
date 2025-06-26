@@ -5,6 +5,7 @@ defmodule Servy.Handler do
     request
     |> parse
     |> log
+    |> rewrite_path
     |> route
     |> format_response
   end
@@ -20,6 +21,13 @@ defmodule Servy.Handler do
       |> String.split(" ")
     %{method: method, path: path, status: nil, resp_body: ""}
   end
+
+  def rewrite_path(%{path: "/wildlife"} = conv) do
+    IO.puts "Rewriting wildlife to wildthings"
+    %{conv | path: "/wildthings"}
+  end
+
+  def rewrite_path(conv), do: conv
 
   def route(conv) do
     route(conv, conv.method, conv.path)
@@ -121,3 +129,14 @@ IO.puts bear_response
 
 delete_bear_response = Servy.Handler.handle(delete_bear_request)
 IO.puts delete_bear_response
+
+request = """
+GET /wildlife HTTP/1.1
+Host: example.com
+Accept: */*
+User-Agent: Elixir Client
+
+"""
+
+response = Servy.Handler.handle(request)
+IO.puts response
