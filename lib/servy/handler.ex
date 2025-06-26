@@ -2,6 +2,8 @@ defmodule Servy.Handler do
 
   @moduledoc "Handles HTTP requests"
 
+  @pages_path Path.expand("../../pages", __DIR__)
+
   @doc "Transforms a request into a response"
   def handle(request) do
     # Pipe the response of each function into the next function
@@ -69,7 +71,7 @@ defmodule Servy.Handler do
   end
 
   def route(%{method: "GET", path: "/bears/new"} = conv) do
-    file_path = Path.expand("../../pages", __DIR__) |> Path.join("form.html")
+    file_path = @pages_path |> Path.join("form.html")
     case File.read(file_path) do
       {:ok, content} ->
         %{conv | status: 200, resp_body: content}
@@ -87,7 +89,7 @@ defmodule Servy.Handler do
   end
 
   def route(%{method: "GET", path: "/about"} = conv) do
-    about_path = Path.expand("../../pages", __DIR__) |> Path.join("about.html")
+    about_path = @pages_path |> Path.join("about.html")
     case File.read(about_path) do
       {:ok, contents} ->
         %{conv | status: 200, resp_body: contents}
@@ -99,7 +101,7 @@ defmodule Servy.Handler do
   end
 
   def route(%{path: path} = conv) do
-    file_path = Path.expand("../../pages", __DIR__) |> Path.join(path <> ".html")
+    file_path = @pages_path |> Path.join(path <> ".html")
     case File.read(file_path) do
       {:ok, content} ->
         %{conv | status: 200, resp_body: content}
