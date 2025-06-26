@@ -37,6 +37,10 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "Bear #{id}!"}
   end
 
+  def route(conv, "DELETE", "/bears/" <> id) do
+    %{conv | status: 204, resp_body: "Deleted Bear #{id}!"}
+  end
+
   def route(conv, _method, path) do
     %{conv | status: 404, resp_body: "Not Found: #{path}"}
   end
@@ -55,7 +59,9 @@ defmodule Servy.Handler do
     %{
       200=> "OK",
       404=> "Not Found",
-      201=> "Created"
+      201=> "Created",
+      204=> "No Content",
+      500=> "Internal Server Error"
     }[code]
   end
 end
@@ -93,6 +99,14 @@ User-Agent: Elixir Client
 
 """
 
+delete_bear_request = """
+DELETE /bears/10 HTTP/1.1
+Host: example.com
+Accept: */*
+User-Agent: Elixir Client
+
+"""
+
 response = Servy.Handler.handle(request)
 IO.puts response
 
@@ -104,3 +118,6 @@ IO.puts tigers_response
 
 bear_response = Servy.Handler.handle(bear_request)
 IO.puts bear_response
+
+delete_bear_response = Servy.Handler.handle(delete_bear_request)
+IO.puts delete_bear_response
