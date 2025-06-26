@@ -95,7 +95,13 @@ defmodule Servy.Handler do
   end
 
   def route(%{path: path} = conv) do
-    %{conv | status: 404, resp_body: "Not Found: #{path}"}
+    file_path = Path.expand("../../pages", __DIR__) |> Path.join(path <> ".html")
+    case File.read(file_path) do
+      {:ok, content} ->
+        %{conv | status: 200, resp_body: content}
+      {:error, :enoent} ->
+        %{conv | status: 404, resp_body: "Not Found: #{path}"}
+    end
   end
 
   def track(%{status: 404} = conv) do
@@ -224,6 +230,17 @@ IO.puts response
 
 request = """
 GET /bears/new HTTP/1.1
+Host: example.com
+Accept: */*
+User-Agent: Elixir Client
+
+"""
+
+response = Servy.Handler.handle(request)
+IO.puts response
+
+request = """
+GET /contact HTTP/1.1
 Host: example.com
 Accept: */*
 User-Agent: Elixir Client
