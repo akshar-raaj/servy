@@ -6,7 +6,7 @@ defmodule Servy.Handler do
     |> parse
     |> log
     |> rewrite_path
-    |> rewrite_bear_query_params
+    |> log
     |> route
     |> track
     |> emojify
@@ -14,9 +14,18 @@ defmodule Servy.Handler do
   end
 
   # A single expression in the function body. Hence can be written on one line without an end
+  # IO.inspect writes to stdout, and in addition also returns the value passed to it.
+  # Hence, can be safely used in a pipeline.
   def log(conv), do: IO.inspect conv
 
   def parse(request) do
+    # A classic example of a pipeline.
+    # The request is a string, and we want to convert it to a map.
+    # We split the request string by newlines, take the first line, and then split that line by spaces.
+    # The first two elements of the resulting list are the method and path
+    # The third element is ignored (the HTTP version).
+    # We then create a map with the method, path, status (initially nil),
+    # and an empty response body.
     [method, path, _] =
       request
       |> String.split("\n")
@@ -27,18 +36,23 @@ defmodule Servy.Handler do
 
   def rewrite_path(%{path: "/wildlife"} = conv) do
     IO.puts "Rewriting wildlife to wildthings"
+    # Return an updated conv with the path changed
+    # This is a new map with the same keys as conv, but with the path changed
     %{conv | path: "/wildthings"}
   end
 
-  def rewrite_path(conv), do: conv
-
-  def rewrite_bear_query_params(%{path: "/bears?id=" <> bear_id} = conv) do
+  def rewrite_path(%{path: "/bears?id=" <> bear_id} = conv) do
+    # Bear with query parameter.
+    # Modify it to route to bear detail.
     IO.puts "Rewriting bear query param to bear detail"
     %{conv | path: "/bears/" <> bear_id}
   end
 
-  # Default catch-all function clause.
-  def rewrite_bear_query_params(conv), do: conv
+  # A function clause that matches when the path is not "/wildlife"
+  # This is a default catch-all function clause.
+  # Ordering is important in Elixir. The first matching function clause is executed.
+  # As this is a generic function, it will match any conv that does not match the previous clause.
+  def rewrite_path(conv), do: conv
 
   # This is route/1. Function are identified by their name and arity.
   def route(conv) do
