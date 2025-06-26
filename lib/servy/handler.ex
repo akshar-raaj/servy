@@ -63,6 +63,17 @@ defmodule Servy.Handler do
     %{conv | status: 204, resp_body: "Deleted Bear #{id}!"}
   end
 
+  def route(conv, "GET", "/about") do
+    case File.read("pages/about.html") do
+      {:ok, contents} ->
+        %{conv | status: 200, resp_body: contents}
+      {:error, :enoent} ->
+        %{conv | status: 404, resp_body: "File not found"}
+      {:error, a} ->
+        %{conv | status: 500, resp_body: "File Error: #{a}"}
+    end
+  end
+
   def route(conv, _method, path) do
     %{conv | status: 404, resp_body: "Not Found: #{path}"}
   end
@@ -171,6 +182,17 @@ IO.puts response
 
 request = """
 GET /bears?id=5 HTTP/1.1
+Host: example.com
+Accept: */*
+User-Agent: Elixir Client
+
+"""
+
+response = Servy.Handler.handle(request)
+IO.puts response
+
+request = """
+GET /about HTTP/1.1
 Host: example.com
 Accept: */*
 User-Agent: Elixir Client
