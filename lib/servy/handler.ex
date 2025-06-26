@@ -1,4 +1,8 @@
 defmodule Servy.Handler do
+
+  @moduledoc "Handles HTTP requests"
+
+  @doc "Transforms a request into a response"
   def handle(request) do
     # Pipe the response of each function into the next function
     # A series of transformations happening here
