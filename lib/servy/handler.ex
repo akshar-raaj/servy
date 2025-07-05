@@ -1,6 +1,6 @@
 defmodule Servy.Handler do
 
-  @moduledoc "Handles HTTP requests"
+  @moduledoc "Handles HTTP requests and returns appropriate response"
 
   @pages_path Path.expand("../../pages", __DIR__)
 
@@ -23,6 +23,7 @@ defmodule Servy.Handler do
   end
 
   # This is route/1 A function clause
+  @doc "Path function handler. Handles GET /wildthings"
   def route(%{method: "GET", path: "/wildthings"} = conv) do
     %{conv | status: 200, resp_body: "Tiger, Lion, Wolf"}
   end
