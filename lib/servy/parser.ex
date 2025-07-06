@@ -8,9 +8,18 @@ defmodule Servy.Parser do
     # We then create a map with the method, path, status (initially nil),
     # and an empty response body.
     [request_and_headers, params_string] = request |> String.split("\n\n")
-    [request_line | _headers] = request_and_headers |> String.split("\n")
+    [request_line | header_lines] = request_and_headers |> String.split("\n")
+    headers = parse_headers(header_lines, %{})
     params = URI.decode_query(params_string)
     [method, path, _] = request_line |> String.trim |> String.split(" ")
-    %{method: method, path: path, status: nil, resp_body: "", params: params}
+    %{method: method, path: path, status: nil, resp_body: "", params: params, headers: headers}
   end
+
+  def parse_headers([head | tail], headers) do
+    [key, value] = head |> String.split(": ")
+    headers = Map.put(headers, key, value)
+    parse_headers(tail, headers)
+  end
+
+  def parse_headers([], headers), do: headers
 end

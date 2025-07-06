@@ -220,6 +220,7 @@ create_bear_request = """
 POST /bears HTTP/1.1
 Host: example.com
 Accept: */*
+User-Agent: Elixir Client
 Content-Type: application/x-www-form-urlencoded
 
 name=teddy&age=1
