@@ -70,6 +70,6 @@ defmodule Recursy do
   end
 
   def loop([]) do
-    IO.puts "Done"
+    IO.puts "Done!"
   end
 end
