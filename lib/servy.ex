@@ -58,3 +58,18 @@ IO.puts Servy.hello("neelima")
 
 IO.puts Servy.lname(%{name: "akshar", age: 36})
 IO.puts Servy.lname(%{name: "neelima gupta", age: 36})
+
+
+defmodule Recursy do
+  @moduledoc "Demonstrates recursion!"
+
+  @doc "A recursive function, with two function clauses!"
+  def loop([head | tail]) do
+    IO.puts head
+    loop(tail)
+  end
+
+  def loop([]) do
+    IO.puts "Done"
+  end
+end
