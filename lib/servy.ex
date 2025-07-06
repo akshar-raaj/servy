@@ -79,4 +79,11 @@ defmodule Recursy do
   end
 
   def sum([], total), do: total
+
+  def triple([head | tail], result) do
+    result = result ++ [head * 3]
+    triple(tail, result)
+  end
+
+  def triple([], result), do: result
 end
