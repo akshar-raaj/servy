@@ -51,6 +51,11 @@ defmodule Servy.Handler do
     %{conv | status: 204, resp_body: "Deleted Bear #{id}!"}
   end
 
+  def route(%{method: "POST", path: "/bears"} = conv) do
+    bear_name = conv.params["name"]
+    %{conv | status: 201, resp_body: "Created a bear with name: #{bear_name}"}
+  end
+
   def route(%{method: "GET", path: "/about"} = conv) do
     about_path = @pages_path |> Path.join("about.html")
     case File.read(about_path) do
@@ -209,4 +214,16 @@ User-Agent: Elixir Client
 """
 
 response = Servy.Handler.handle(request)
+IO.puts response
+
+create_bear_request = """
+POST /bears HTTP/1.1
+Host: example.com
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+
+name=teddy&age=1
+"""
+
+response = Servy.Handler.handle(create_bear_request)
 IO.puts response

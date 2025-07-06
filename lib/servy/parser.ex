@@ -7,11 +7,10 @@ defmodule Servy.Parser do
     # The third element is ignored (the HTTP version).
     # We then create a map with the method, path, status (initially nil),
     # and an empty response body.
-    [method, path, _] =
-      request
-      |> String.split("\n")
-      |> List.first()
-      |> String.split(" ")
-    %{method: method, path: path, status: nil, resp_body: ""}
+    [request_and_headers, params_string] = request |> String.split("\n\n")
+    [request_line | _headers] = request_and_headers |> String.split("\n")
+    params = URI.decode_query(params_string)
+    [method, path, _] = request_line |> String.trim |> String.split(" ")
+    %{method: method, path: path, status: nil, resp_body: "", params: params}
   end
 end
