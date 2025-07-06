@@ -72,4 +72,11 @@ defmodule Recursy do
   def loop([]) do
     IO.puts "Done!"
   end
+
+  def sum([head | tail], total) do
+    total = total + head
+    sum(tail, total)
+  end
+
+  def sum([], total), do: total
 end
